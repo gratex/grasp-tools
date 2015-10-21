@@ -4,4 +4,13 @@ When grasp CLI is not enough.
 
 ## Play
 
+Exposed as bin:
+
 	./bin/grasp-amd-aliases test/
+	./bin/grasp-amd-aliases-usage test/
+
+
+Other just as sources:
+
+	node src/multiple-returns.js test/data/sample01.js
+	node src/event-not-set-null.js test/data/sample01.js
