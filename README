@@ -1,0 +1,7 @@
+# grasp-tools
+
+When grasp CLI is not enough. 
+
+## Play
+
+	./bin/grasp-amd-aliases test/
