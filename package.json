@@ -20,5 +20,5 @@
   },
   "bin": {
     "grasp-amd-aliases": "bin/grasp-amd-aliases"
-  },
+  }
 }
