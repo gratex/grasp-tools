@@ -1,6 +1,6 @@
 {
   "name": "grasp-tool",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "rql": "^0.3.3"
   },
   "bin": {
-    "grasp-amd-aliases": "bin/grasp-amd-aliases"
+    "grasp-amd-aliases": "bin/grasp-amd-aliases",
+    "grasp-amd-aliases-usage": "bin/grasp-amd-aliases-usage"
   }
 }
