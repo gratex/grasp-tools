@@ -11,17 +11,22 @@ var rql = require("rql/js-array");
 
 require('./grasp')('Output usage aliases (and their counts) for every dojo module', function(ast) { // process AST of file
 	"use strict";
-	ast.query('call[callee=(#require, #define)].args:last:matches(func-exp)').forEach(function(fncExp) { // process every AMD
+	ast.query('call[callee=(#require, #define)]').forEach(function(rd) { // process every AMD
 		// <require|define>(   [<packages>]   ,   function(<aliases>) { ... }  )
 
-		// aliases of packages of given AMD:
-		var aliases = fncExp.params;
+		var args = rd.query('call.args:first'); // mids
+		var aliasesFn = rd.query('call.args:last:matches(func-exp)'); // aliases
 
-		var an, astQueryEngine = _createAstQueryEngine(fncExp.body);
-		aliases && aliases.forEach(function(alias) { // process packages
-			an = alias.name;
-			aliasUsage[ast.file + " | " + an] = astQueryEngine(an);
-		});
+		if (aliasesFn.length) {
+			var astQueryEngine = _createAstQueryEngine(aliasesFn[0].body);
+
+			args.length && (args = args[0].elements);
+			aliasesFn.length && (aliasesFn = aliasesFn[0].params);
+
+			aliasesFn && aliasesFn.forEach(function(alias, index) { // process aliases
+				aliasUsage[ast.file + " | " + args[index].value + " | " + alias.name] = astQueryEngine(alias.name);
+			});
+		}
 	});
 });
 
@@ -37,11 +42,10 @@ function _createAstQueryEngine(astBody) {
 	};
 }
 
-console.log("| File | Alias | Used Count |");
-console.log("| ---- | ----- | ---- |");
+console.log("| File | MID | Alias | Used Count |");
+console.log("| ---- | --- | ----- | ---------- |");
 
 Object.keys(aliasUsage).forEach(function(alias) {
 	"use strict";
 	console.log("|", alias, "|", aliasUsage[alias], "|");
-
 });
