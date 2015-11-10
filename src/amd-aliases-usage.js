@@ -14,17 +14,17 @@ require('./grasp')('Output usage aliases (and their counts) for every dojo modul
 	ast.query('call[callee=(#require, #define)]').forEach(function(rd) { // process every AMD
 		// <require|define>(   [<packages>]   ,   function(<aliases>) { ... }  )
 
-		var args = rd.query('call.args:first'); // mids
-		var aliasesFn = rd.query('call.args:last:matches(func-exp)'); // aliases
+		var mids = rd.query('call.args:matches(arr).elements').map(function(mid) {
+			return mid.value;
+		});
+		var aliasesFn = rd.query('call.args:last:matches(func-exp)'); // aliases, needs body and params
 
 		if (aliasesFn.length) {
-			var astQueryEngine = _createAstQueryEngine(aliasesFn[0].body);
+			var aliasFn = aliasesFn[0];
+			var astQueryEngine = _createAstQueryEngine(aliasFn.body);
 
-			args.length && (args = args[0].elements);
-			aliasesFn.length && (aliasesFn = aliasesFn[0].params);
-
-			aliasesFn && aliasesFn.forEach(function(alias, index) { // process aliases
-				aliasUsage[ast.file + " | " + args[index].value + " | " + alias.name] = astQueryEngine(alias.name);
+			aliasFn.params.forEach(function(alias, index) { // process aliases
+				aliasUsage[ast.file + " | " + mids[index] + " | " + alias.name] = astQueryEngine(alias.name);
 			});
 		}
 	});
