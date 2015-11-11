@@ -6,8 +6,10 @@
 * Sample: ./grasp.js ./amd-aliases-usage.js ../test
 */
 
-var aliasUsage = {}; // map module/package to its aliases
 var rql = require("rql/js-array");
+
+console.log("| File | MID | Alias | Used Count |");
+console.log("| ---- | --- | ----- | ---------- |");
 
 require('./grasp')('Output usage aliases (and their counts) for every dojo module', function(ast) { // process AST of file
 	"use strict";
@@ -24,7 +26,7 @@ require('./grasp')('Output usage aliases (and their counts) for every dojo modul
 			var astQueryEngine = _createAstQueryEngine(aliasFn.body);
 
 			aliasFn.params.forEach(function(alias, index) { // process aliases
-				aliasUsage[ast.file + " | " + mids[index] + " | " + alias.name] = astQueryEngine(alias.name);
+				console.log("|", ast.file, "|", mids[index], "|", alias.name, "|", astQueryEngine(alias.name), "|");
 			});
 		}
 	});
@@ -41,11 +43,3 @@ function _createAstQueryEngine(astBody) {
 		}, astBody).length;
 	};
 }
-
-console.log("| File | MID | Alias | Used Count |");
-console.log("| ---- | --- | ----- | ---------- |");
-
-Object.keys(aliasUsage).forEach(function(alias) {
-	"use strict";
-	console.log("|", alias, "|", aliasUsage[alias], "|");
-});
