@@ -28,8 +28,11 @@ module.exports = function(description, cb) {
 	}
 
 	var args = process.argv.slice(2);
+	var paths = args.filter(function(a) {
+		return a[0] != "-";
+	});
 
-	if (!args.length) {
+	if (!paths.length) {
 		description && console.error(description);
 		console.error("Usage: [<path>]+");
 		console.error("   where every <path> is either file or directory (for recursive searching)");
@@ -38,7 +41,7 @@ module.exports = function(description, cb) {
 		process.exit(1);
 	}
 
-	args.forEach(walker);
+	paths.forEach(walker);
 
 	function walker(p) {
 		var code, ast;
