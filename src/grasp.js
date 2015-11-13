@@ -41,13 +41,15 @@ module.exports = function(description, cb) {
 		process.exit(1);
 	}
 
-	paths.forEach(walker);
+	paths.forEach(function(p) {
+		walker(p, false);
+	});
 
-	function walker(p) {
+	function walker(p, inDir) {
 		var code, ast;
 		if (fs.lstatSync(p).isDirectory()) {
 			fs.readdirSync(p).forEach(function(name) {
-				walker(path.join(p, name));
+				walker(path.join(p, name), true);
 			});
 		} else if (/\.js$/.test(p)) {
 
@@ -72,19 +74,37 @@ module.exports = function(description, cb) {
 				msg = ast;
 				ast = this;
 			}
-			var start = code.substr(0, ast.start).split('\n');
-			// select part of code from `start` to `end`
-			var selectedPart = code.substring(ast.start, ast.end);
-			var end = start.length + selectedPart.split('\n').length - 1;
-			console.log(clc.magenta(p) + clc.cyan(":") + clc.green(start.length + "-" + end) + clc.cyan(":(multiline):")); //(msg ? "(" + msg + ")" : ""))
-			// write selected part of code in red bold
-			console.log(start.pop() + clc.red.bold(selectedPart) + code.substring(ast.end).split(/[\r\n]/)[0]);
+
+			_logMatch(ast);
+
+			function _logMatch(ast) {
+				var start = code.substr(0, ast.start).split('\n');
+				// select part of code from `start` to `end`
+				var selectedPart = code.substring(ast.start, ast.end);
+				var end = start.length + selectedPart.split('\n').length - 1;
+
+				if (start.length != end) {
+					console.log(_buildFileName() + clc.green(start.length + "-" + end) + clc.cyan(":(multiline):"));
+					console.log(_buildMatch());
+				} else {
+					console.log(_buildFileName() + clc.green(end) + clc.cyan(":") + _buildMatch());
+				}
+
+				function _buildFileName() {
+					return inDir ? clc.magenta(p) + clc.cyan(":") : "";
+				}
+
+				function _buildMatch() {
+					// write selected part of code in red bold
+					return start.pop() + clc.red.bold(selectedPart) + code.substring(ast.end).split(/[\r\n]/)[0];
+				}
+			}
 		}
 
 		function logArray(cb) {
 			var result;
 			/*jshint validthis:true */
-			this.forEach(function(item){
+			this.forEach(function(item) {
 				result = cb(item);
 				if (result) {
 					logOne(typeof result === 'object' ? result : item);
