@@ -25,7 +25,7 @@ require('./grasp')('Output aliases (and their counts) for every dojo module', fu
 
 		aliases && packages && packages.forEach(function(pckg, i) { // process packages
 			if ((i < aliases.length) && !exceptions.test(pckg.value)) { // module has alias
-				pckg = pckg.value.split('!')[0]; // ignore parameters of plugins
+				pckg = (pckg.value || "[DYNAMIC]").split('!')[0]; // ignore parameters of plugins
 				var alias = aliases[i].name; // alias corresponding to package `pckg`
 				var aliasCount = pckg2aliasCount[pckg] || (pckg2aliasCount[pckg] = {}); // take map of aliases->counts of given `pckg`
 				aliasCount[alias] = (aliasCount[alias] || 0) + 1; // increase count of aliases

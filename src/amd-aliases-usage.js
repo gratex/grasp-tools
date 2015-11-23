@@ -51,7 +51,7 @@ require('./grasp')('Output usage aliases (and their counts) for every dojo modul
 		var mids = displayMidNames && rd.query('call.args:matches(arr).elements').map(function(mid) {
 			return {
 				ast : mid,
-				name : mid.value
+				name : (mid.value || "[DYNAMIC]").split('!')[0] // ignore parameters of plugins
 			};
 		});
 		var aliasesFn = rd.query('call.args:last:matches(func-exp)'); // aliases, needs body and params
