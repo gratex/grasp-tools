@@ -102,7 +102,7 @@ function help() {
 	console.error("Usage: [--help|-h] [--pretty] [--unused|-u] [--names|-n] [<path>]+");
 	console.error("   --help|-h		print this help");
 	console.error("   --unused|-u		print only unused aliases");
-	console.error("   --names|-a		print module name for alias");
+	console.error("   --names|-n		print module name for alias");
 	console.error("   --pretty		print grasp output format");
 	console.error("   where every <path> is either file or directory (for recursive searching)");
 	process.exit(1);
