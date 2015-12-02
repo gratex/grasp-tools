@@ -4,7 +4,7 @@
 * except: domClass.replace(__,__,__)
 */
 
-require('./grasp')(function(ast) {
+require('../lib/grasp')(function(ast) {
 	"use strict";
 	ast.query('call[callee=member[prop=#replace][obj=:not(#domClass)]]').log(function(ast) {
 		return (ast["arguments"].length === 3);

@@ -1,109 +1,68 @@
 /*jshint node:true*/
-/**
-* Output (in un-escaped-markdown table format) aliases usage (and their counts) for every AMD module/package
-* Usage: [<path>]*
-*     where every <path> is path of file or directory (for recursive search)
-* Sample: ./grasp.js ./amd-aliases-usage.js ../test
-*/
+var astQueryEngine = require("./lib/queryEngine/ast").requireOrDefine;
+var rqlQueryEngine = require("./lib/queryEngine/rql");
+var aqueryWalker = require("./lib/ast-query");
+var output = require("./lib/output");
+var options = require("./lib/options")(__filename);
 
-var rql = require("rql/js-array");
-var args = process.argv.slice(2);
+var args = options.parse(process.argv);
+//console.log(args);
+//process.exit(1);
 
-// parse args
-var displayUnusedOnly = false;
-var displayMidNames = false;
-var prettyPrint = false;
-var DELIM = "|";
-
-args.forEach(function(a) {
-	if (a == "--unused" || a == "-u") {
-		displayUnusedOnly = true;
-	} else if (a == "--names" || a == "-n") {
-		displayMidNames = true;
-	} else if (a == "--pretty") {
-		prettyPrint = true;
-	} else if (a == "--help" || a == "-h") {
-		help();
-	} else if (a[0] == "-") {
-		console.error("Unknow option:", a);
-		help();
-	}
-});
-
-var paths = args.filter(function(a) {
-	return a[0] != "-";
-});
-
-if (!prettyPrint && paths.length) {
-	if (displayMidNames) {
-		console.log(DELIM, "File", DELIM, "MID", DELIM, "Alias", DELIM, "Used Count", DELIM);
-		console.log(DELIM, "----", DELIM, "---", DELIM, "-----", DELIM, "----------", DELIM);
-	} else {
-		console.log(DELIM, "File", DELIM, "Alias", DELIM, "Used Count", DELIM);
-		console.log(DELIM, "----", DELIM, "-----", DELIM, "----------", DELIM);
-	}
+if (args.help || (!args.file && !args._.length)) {
+	console.log(options.generateHelp());
+	process.exit(1);
 }
 
-require('./grasp')('Output usage aliases (and their counts) for every dojo module', function(ast, log) { // process AST of file
+var printer = output[args.json ? "jsonPrinter" : "tabularPrinter"]();
+printer.header(args.names ? [
+	"File",
+	"Mid",
+	"Alias",
+	"Used Count"
+] : [
+	"File",
+	"Alias",
+	"Used Count"
+]);
+
+aqueryWalker(args.file || args._, findUnusedModules);
+
+printer.flush();
+
+function findUnusedModules(ast) { // process AST of file
 	"use strict";
 	// <require|define>(   [<packages>]   ,   function(<aliases>) { ... }  )
-	ast.query('call[callee=(#require, #define)]').forEach(function(rd) {
-		var mids = displayMidNames && rd.query('call.args:matches(arr).elements').map(function(mid) {
+	astQueryEngine.call(ast).forEach(function(rd) {
+		var mids = args.names && astQueryEngine.args(rd).map(function(mid, a, x) {
 			return {
 				ast : mid,
-				name : (mid.value || "[DYNAMIC]").split('!')[0] // ignore parameters of plugins
+				// ignore parameters of plugins
+				name : (mid.value || "[DYNAMIC]").split('!')[0]
 			};
 		});
-		var aliasesFn = rd.query('call.args:last:matches(func-exp)'); // aliases, needs body and params
+		var aliasesFn = astQueryEngine.aliases(rd); // aliases, needs body and params
 
 		if (aliasesFn.length) {
 			var cnt, aliasFn = aliasesFn[0];
-			var astQueryEngine = _createAstQueryEngine(aliasFn.body);
+			var usageQueryEngine = rqlQueryEngine.queryByIdentifier(aliasFn.body); // create query engine on AST
 
 			aliasFn.params.forEach(function(alias, index) { // process aliases
-				cnt = astQueryEngine(alias.name);
-				if (displayUnusedOnly && cnt) {
+				cnt = usageQueryEngine(alias.name);
+				if (args.unused && cnt) {
 					return;
 				}
-
-				if (prettyPrint) {
-					displayMidNames ? log(mids[index].ast) : log(alias);
-				} else {
-
-					// build output
-					var parts = [
-						ast.file
-					];
-					if (displayMidNames) {
-						parts.push(mids[index].name);
-					}
-					parts.push(alias.name, cnt);
-
-					console.log(DELIM, parts.join(" " + DELIM + " "), DELIM);
-				}
+				printer.append(args.names ? [
+					ast.file,
+					mids[index].name,
+					alias.name,
+					cnt
+				] : [
+					ast.file,
+					alias.name,
+					cnt
+				]);
 			});
 		}
 	});
-});
-
-function _createAstQueryEngine(astBody) {
-	"use strict";
-	return function(aliasName) {
-		// TODO: create this functions as custom operators for rql engine
-		return rql.query("recurse()&eq(type,Identifier)&eq(name,$1)&distinct()", {
-			parameters : [
-				aliasName
-			]
-		}, astBody).length;
-	};
-}
-
-function help() {
-	console.error("Usage: [--help|-h] [--pretty] [--unused|-u] [--names|-n] [<path>]+");
-	console.error("   --help|-h		print this help");
-	console.error("   --unused|-u		print only unused aliases");
-	console.error("   --names|-n		print module name for alias");
-	console.error("   --pretty		print grasp output format");
-	console.error("   where every <path> is either file or directory (for recursive searching)");
-	process.exit(1);
 }

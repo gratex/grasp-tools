@@ -3,7 +3,7 @@
 * @author stakac 2014/08/05
   usage example:
 
-		require('./grasp')(function(ast, log){
+		require('./lib/grasp')(function(ast, log){
 			// simplest version:
 			ast.query('return').forEach(log);
 			// or custon callback:
@@ -18,6 +18,8 @@ var squery = require('grasp-squery');
 var clc = require('cli-color');
 var fs = require('fs');
 var path = require('path');
+
+// TODO: rename module
 
 module.exports = function(description, cb) {
 	"use strict";
@@ -36,7 +38,7 @@ module.exports = function(description, cb) {
 		description && console.error(description);
 		console.error("Usage: [<path>]+");
 		console.error("   where every <path> is either file or directory (for recursive searching)");
-		console.error("Sample: ./grasp.js");
+		console.error("Sample: ./lib/grasp.js");
 		console.error("Sample: . ../test");
 		process.exit(1);
 	}

@@ -3,7 +3,7 @@
 * Find all on events listeners that don't null event variable in callback
 */
 
-require('./grasp')(function(ast) {
+require('../lib/grasp')(function(ast) {
 	"use strict";
 	//equery.query('__.on(_str, function(__){ _$ })', ast);
 	ast.query("call[callee=member[prop=#on]].args:last:matches(func-exp)").log(function(funcAst) {
