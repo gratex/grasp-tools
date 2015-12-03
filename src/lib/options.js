@@ -24,6 +24,41 @@ module.exports = function(filename) {
 				}
 			]
 		}),
+		"amd-aliases-nc" : optionator({
+			prepend : "Usage: grasp-amd-aliases-nc [option]... [file]...\n\nExample: grasp-amd-aliases-nc --config ./samples/amd-aliases-nc.config.js test/",
+			append : 'Version {{version}}',
+			options : [
+				{
+					heading : "Options"
+				},
+				{
+					option : "help",
+					alias : "h",
+					type : "Boolean",
+					description : "Display this help and exit"
+				},
+				{
+					option : "debug",
+					type : "Boolean",
+					description : "Display debug information"
+				},
+				{
+					option : "config",
+					alias : "c",
+					type : "file::String",
+					description : "Configuration file for naming convention checker",
+					example : "grasp-amd-aliases-nc --config ./samples/amd-aliases-nc.config.js TEST_DIR/"
+				},
+				{
+					option : "file",
+					alias : "f",
+					type : "file::String",
+					description : "File or directory (for recursive searching)",
+					restPositional : true,
+					example : "grasp-amd-aliases-nc --config CONFIG_FILE test/"
+				}
+			]
+		}),
 		"amd-aliases-usage" : optionator({
 			prepend : "Usage: grasp-amd-aliases-usage [option]... [file]...\n\nExample: grasp-amd-aliases-usage -un test/",
 			options : [

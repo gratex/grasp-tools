@@ -21,6 +21,7 @@
   },
   "bin": {
     "grasp-amd-aliases": "bin/grasp-amd-aliases",
+    "grasp-amd-aliases-nc": "bin/grasp-amd-aliases-nc",
     "grasp-amd-aliases-usage": "bin/grasp-amd-aliases-usage"
   }
 }
