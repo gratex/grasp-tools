@@ -20,7 +20,7 @@ var astquery = function(p, cb) {
 			// parse code to ast object
 			ast = acorn.parse(code);
 			// process ast
-			cb(set(ast));
+			cb(set(ast), code);
 		} catch (err) {
 			// log error msg and name of file where error occured
 			console.error(clc.red('ERROR:'), clc.magenta(p), err.stack);

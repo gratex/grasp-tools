@@ -110,6 +110,36 @@ module.exports = function(filename) {
 					restPositional : true
 				}
 			]
+		}),
+		"amd-aliases-remove-unused" : optionator({
+			prepend : "Usage: grasp-amd-aliases-remove-unused [option]... [file]...\n\nExample: grasp-amd-aliases-remove-unused -i test/",
+			options : [
+				{
+					heading : "Replacement"
+				},
+				{
+					option : "in-place",
+					alias : "i",
+					type : "Boolean",
+					description : "overwrite input files with replaced output"
+				},
+				{
+					heading : "Options"
+				},
+				{
+					option : "help",
+					alias : "h",
+					type : "Boolean",
+					description : "Display this help and exit"
+				},
+				{
+					option : "file",
+					alias : "f",
+					type : "file::String",
+					description : "File or directory (for recursive searching)",
+					restPositional : true
+				}
+			]
 		})
 	}[scriptName];
 };
