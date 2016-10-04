@@ -1,3 +1,4 @@
+/*jshint node:true*/
 module.exports = { // SAMPLE config
 	map : { // exact names, this have highest priority
 		"dojox/lang/functional" : "df"

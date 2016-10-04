@@ -1,3 +1,4 @@
+/*jshint node:true*/
 var optionator = require("optionator");
 var path = require("path");
 module.exports = function(filename) {
@@ -79,6 +80,12 @@ module.exports = function(filename) {
 				},
 				{
 					heading : "Filtering"
+				},
+				{
+					option : "grep",
+					alias : "g",
+					type : "String",
+					description : "Search only for modules contain provided string"
 				},
 				{
 					option : "unused",

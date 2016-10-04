@@ -34,7 +34,7 @@ function findUnusedModules(ast) { // process AST of file
 	"use strict";
 	// <require|define>(   [<packages>]   ,   function(<aliases>) { ... }  )
 	astQueryEngine.call(ast).forEach(function(rd) {
-		var mids = args.names && astQueryEngine.args(rd).map(function(mid, a, x) {
+		var mids = (args.names || args.grep) && astQueryEngine.args(rd).map(function(mid/*, a, x*/) {
 			return {
 				ast : mid,
 				// ignore parameters of plugins
@@ -48,6 +48,9 @@ function findUnusedModules(ast) { // process AST of file
 			var usageQueryEngine = rqlQueryEngine.queryByIdentifier(aliasFn.body); // create query engine on AST
 
 			aliasFn.params.forEach(function(alias, index) { // process aliases
+				if (args.grep && !~mids[index].name.indexOf(args.grep)) { // TODO: move to astQueryEngine.args() query directly as parameter
+					return;
+				}
 				cnt = usageQueryEngine(alias.name);
 				if (args.unused && cnt) {
 					return;
