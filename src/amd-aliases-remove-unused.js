@@ -59,13 +59,20 @@ function removeUnusedModules(ast, code) { // process AST of file
 
 		function _removePartOfCode(astNode) {
 			var start = astNode.start - c, end = astNode.end - c;
-			while(code[start - 1] === "\t"
+			var commaRemoved = false;
+
+			while(code[start - 1] === ","
+				|| code[start - 1] === " "
+				|| code[start - 1] === "\t"
 				|| code[start - 1].match(/^$/m)) { // trim left
 				start--;
+				commaRemoved = code[start] === ",";
 			}
-			while(code[end] === ","
-				|| code[end] === " ") { // trim right
-				end++;
+			if (!commaRemoved) {
+					while(code[end] === ","
+						|| code[end] === " ") { // trim right
+						end++;
+					}
 			}
 			if (min > start) {
 				min = start;
