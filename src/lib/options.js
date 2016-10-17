@@ -5,7 +5,16 @@ module.exports = function(filename) {
 	var scriptName = path.basename(filename).split(".")[0]; // file.js -> file
 	return {
 		"amd-aliases" : optionator({
-			prepend : "Usage: grasp-amd-aliases [option]... [file]...\n\nExample: grasp-amd-aliases test/",
+			prepend : "Usage: grasp-amd-aliases [option]... [file]...",
+			append : [
+				"Examples",
+				"",
+				"  # basic usage example",
+				"  grasp-amd-aliases test/",
+				"",
+				"  # unformatting tabular format",
+				"  grasp-amd-aliases test/ | sed \"s;| \\(.*\\) | \\(.*\\) |;\\1\\t\\2;\" | tail -n +3"
+			].join("\n"),
 			options : [
 				{
 					heading : "Options"
@@ -61,10 +70,36 @@ module.exports = function(filename) {
 			]
 		}),
 		"amd-aliases-usage" : optionator({
-			prepend : "Usage: grasp-amd-aliases-usage [option]... [file]...\n\nExample: grasp-amd-aliases-usage -un test/",
+			prepend : "Usage: grasp-amd-aliases-usage [option]... [file]...",
+			append : [
+				"Examples",
+				"",
+				"  # basic usage example",
+				"  grasp-amd-aliases-usage test/",
+				"",
+				"  # output unused modules",
+				"  grasp-amd-aliases-usage -u test/",
+				"",
+				"  # unformatting tabular format",
+				"  grasp-amd-aliases-usage test/ | sed \"s;| \\(.*\\) | \\(.*\\) | \\(.*\\) |;\\1\\t\\2\\t\\3;\" | tail -n +3",
+				"  grasp-amd-aliases-usage -n test/ | sed \"s;| \\(.*\\) | \\(.*\\) | \\(.*\\) | \\(.*\\) |;\\1\\t\\2\\t\\3\\t\\4;\" | tail -n +3",
+				"",
+				"  # count of module import globally (not per file)",
+				"  grasp-amd-aliases-usage -n test/ | tail -n +3 | cut -d\"|\" -f3 | trim | cnt | clmn-swap",
+				"",
+				"  # count of module usage globally (not per file)",
+				"  grasp-amd-aliases-usage -jn test/ | jsonRql \"aggregate(mid,sum(usedCount))\" | jsontool -d \"\\t\" -a mid 0",
+				"",
+				"  # comlex summary of alias names usage",
+				"  grasp-amd-aliases-usage -jn test/ \\",
+				"  	| jsonRql \"aggregate(mid,select(alias))&call(string:0,aggregate(alias,count()))\" \\",
+				"  	| jsontool -c 'this[\"0\"].forEach(function(a){ a.label = a.alias+\"(\"+a[\"0\"]+\")\"}); return true' \\",
+				"  	| jsonRql \"call(string:0,values(label))&join(string:0,%2C%20)\" \\",
+				"  	| jsontool -d \"\\t\" -a mid 0 | clmn"
+			].join("\n"),
 			options : [
 				{
-					heading : "Pretty-printing"
+					heading : "Output control"
 				},
 				{
 					option : "json",
