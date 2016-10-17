@@ -29,7 +29,10 @@ printer.header([
 	"Aliases"
 ]);
 
-aqueryWalker(args.file || args._, function(ast) { // process AST of file
+var files = args._ || [];
+args.file && files.push(args.file);
+
+aqueryWalker(files, function(ast) { // process AST of file
 	"use strict";
 	astQueryEngine.call(ast).forEach(function(amd) { // process every AMD
 		// <require|define>(   [<packages>]   ,   function(<aliases>) { ... }  )

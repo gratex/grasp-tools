@@ -14,7 +14,10 @@ if (args.help || (!args.file && !args._.length)) {
 	process.exit(1);
 }
 
-aqueryWalker(args.file || args._, removeUnusedModules);
+var files = args._ || [];
+args.file && files.push(args.file);
+
+aqueryWalker(files, removeUnusedModules);
 
 function removeUnusedModules(ast, code) { // process AST of file
 	"use strict";

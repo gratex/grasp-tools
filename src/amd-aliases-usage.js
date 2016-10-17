@@ -26,7 +26,10 @@ printer.header(args.names ? [
 	"Used Count"
 ]);
 
-aqueryWalker(args.file || args._, findUnusedModules);
+var files = args._ || [];
+args.file && files.push(args.file);
+
+aqueryWalker(files, findUnusedModules);
 
 printer.flush();
 

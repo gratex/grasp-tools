@@ -20,7 +20,7 @@ module.exports = function(filename) {
 					option : "file",
 					alias : "f",
 					type : "file::String",
-					description : "File or directory (for recursive searching)",
+					description : "File or directory (for recursive searching). Everything after this option will be taken to be a file or directory.",
 					restPositional : true
 				}
 			]
@@ -106,7 +106,7 @@ module.exports = function(filename) {
 					option : "file",
 					alias : "f",
 					type : "file::String",
-					description : "File or directory (for recursive searching)",
+					description : "File or directory (for recursive searching). Everything after this option will be taken to be a file or directory.",
 					restPositional : true
 				}
 			]
@@ -121,7 +121,7 @@ module.exports = function(filename) {
 					option : "in-place",
 					alias : "i",
 					type : "Boolean",
-					description : "overwrite input files with replaced output"
+					description : "Overwrite input files with replaced output"
 				},
 				{
 					heading : "Options"
@@ -136,7 +136,7 @@ module.exports = function(filename) {
 					option : "file",
 					alias : "f",
 					type : "file::String",
-					description : "File or directory (for recursive searching)",
+					description : "File or directory (for recursive searching). Everything after this option will be taken to be a file or directory.",
 					restPositional : true
 				}
 			]
